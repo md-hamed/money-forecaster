@@ -1,24 +1,17 @@
-# README
+## Money Forecaster
+A project to get insights and forecasts about how money behaves in differenc scenarios.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+#### Ruby version
+ruby-2.2.6
 
-Things you may want to cover:
+#### Rails version
+5.1.4
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+#### Installation 
+Just the normal installation path, nothing mysteriuos.
+```
+bundle
+rake db:prepare
+rails s
+```
+and tada :tada:
