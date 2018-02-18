@@ -3,5 +3,9 @@ class Transaction < ApplicationRecord
   belongs_to :scenario
 
   # Validations
-  validates :amount, :issued_on, presence: true
+  validates :amount, :issued_on, :type, presence: true
+
+  def signed_amount
+    amount
+  end
 end

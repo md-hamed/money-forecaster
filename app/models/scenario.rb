@@ -29,6 +29,7 @@ class Scenario < ApplicationRecord
   # if a month and year are provided; it returns cumulative
   # total till the provided date
   def cumulative_total(month = nil, year = nil)
+    # TODO
   end
 
   alias bank_balance cumulative_total
