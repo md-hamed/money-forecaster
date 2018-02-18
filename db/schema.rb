@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 20180217223012) do
     t.string "title"
     t.decimal "amount", precision: 8, scale: 2, default: "0.0"
     t.string "currency", default: "USD"
+    t.string "type"
     t.date "issued_on"
     t.integer "scenario_id"
     t.datetime "created_at", null: false
