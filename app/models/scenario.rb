@@ -29,7 +29,36 @@ class Scenario < ApplicationRecord
   # if a month and year are provided; it returns cumulative
   # total till the provided date
   def cumulative_total(month = nil, year = nil)
-    # TODO
+    first_available_income = incomes.minimum(:issued_on)
+    first_available_expense = expenses.minimum(:issued_on)
+
+    if month.present? && year.present?
+      date = Date.new(year, month, 1)
+      last_available_expense = last_available_income = date
+    else
+      last_available_income = incomes.maximum(:issued_on)
+      last_available_expense = expenses.maximum(:issued_on)
+    end
+
+    min_period_date = [first_available_income, first_available_expense].min
+    max_period_date = [last_available_income, last_available_expense].max
+
+    # loop from min period date to max period date
+    current_date = min_period_date
+    cumulative_total = 0
+    prev_month_income = 0
+    while current_date != (max_period_date + 1.month) do
+      
+      month_income = revenue_on(current_date.month, current_date.year)
+
+      month_income = prev_month_income if month_income == 0
+      cumulative_total += month_income
+      prev_month_income = month_income
+
+      current_date += 1.month
+    end
+
+    cumulative_total
   end
 
   alias bank_balance cumulative_total
@@ -83,5 +112,9 @@ class Scenario < ApplicationRecord
     model.where('extract(month from issued_on) = ?', month)
          .where('extract(year from issued_on) = ?', year)
          .sum(:amount)
+  end
+
+  def true_cumulative_revenue
+    incomes.sum(:amount) - expenses.sum(:amount)
   end
 end
