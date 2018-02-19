@@ -12,12 +12,12 @@ class Scenario < ApplicationRecord
 
   # income of specefic month/year
   def income_on(month, year)
-    transactions_on(:income, month, year)
+    transactions_amount_on(:income, month, year)
   end
 
   # expenses of specefic month/year
   def expenses_on(month, year)
-    transactions_on(:expenses, month, year)
+    transactions_amount_on(:expenses, month, year)
   end
 
   # revenue of specefic month/year
@@ -106,7 +106,7 @@ class Scenario < ApplicationRecord
 
   # helper method to get transactions
   # of specefic type on a date
-  def transactions_on(type, month, year)
+  def transactions_amount_on(type, month, year)
     model = type.to_s.classify.constantize
 
     model.where('extract(month from issued_on) = ?', month)
