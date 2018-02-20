@@ -102,8 +102,8 @@ class Scenario < ApplicationRecord
   end
 
   # helper method to return true available
-  # transactions cumulative revenue
-  def true_cumulative_revenue
+  # transactions cumulative total
+  def true_cumulative_total
     incomes.sum(:amount_cents) - expenses.sum(:amount_cents)
   end
 
