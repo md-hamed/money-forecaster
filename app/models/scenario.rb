@@ -10,16 +10,20 @@ class Scenario < ApplicationRecord
 
   # Getters
 
-  def income_of_month(month, year)
-    last_available_transaction_amount(:income, month, year)
+  def income_of_month(month, year, percent: 0.0)
+    amount = last_available_transaction_amount(:income, month, year)
+    raised_amount(amount, percent, month, year)
   end
 
-  def expenses_of_month(month, year)
-    last_available_transaction_amount(:expense, month, year)
+  def expenses_of_month(month, year, percent: 0.0)
+    amount = last_available_transaction_amount(:expense, month, year)
+    raised_amount(amount, percent, month, year)
   end
 
-  def revenue_of_month(month, year)
-    income_of_month(month, year) - expenses_of_month(month, year)
+  def revenue_of_month(month, year, income_percent: 0.0, expenses_percent: 0.0)
+    income = income_of_month(month, year, percent: income_percent)
+    expenses = expenses_of_month(month, year, percent: expenses_percent)
+    income - expenses
   end
 
   # returns cumulative total for all months
@@ -102,7 +106,7 @@ class Scenario < ApplicationRecord
       curr_contains_transaction = available_transactions.include?(curr)
 
       if ((prev + 1.month) != curr) || !curr_contains_transaction # gap identified
-        gap_length = (curr.year * 12 + curr.month) - (prev.year * 12 + prev.month)
+        gap_length = months_difference(curr, prev)
         gap_length -= 1 if curr_contains_transaction
         total_gaps_amount += gap_length * total_transactions_of_month(type, prev.month, prev.year)
       end
@@ -121,10 +125,26 @@ class Scenario < ApplicationRecord
     if month.present? && year.present?
       end_date = Date.new(year, month)
     else
-      end_date = transactions.maximum(:issued_on) # max transaction date
+      end_date = max_transaction_date
     end
 
     available_dates.where('issued_on <= ?', end_date)
                      .map(&:issued_on).push(end_date).uniq
+  end
+
+  def last_transaction_date
+    transactions.maximum(:issued_on)
+  end
+
+  def months_difference(current_date, previous_date)
+    (current_date.year * 12 + current_date.month) - (previous_date.year * 12 + previous_date.month)
+  end
+
+  def raised_amount(amount, percent, month, year)
+    date = Date.new(year, month, 1)
+    return amount if date <= last_transaction_date || percent.zero?
+
+    diff = months_difference(date, last_transaction_date)
+    amount * ((1 + percent/100.0) ** diff)
   end
 end
