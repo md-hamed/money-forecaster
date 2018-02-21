@@ -12,12 +12,12 @@ class Scenario < ApplicationRecord
 
   def income_of_month(month, year, percent: 0.0)
     amount = last_available_transaction_amount(:income, month, year)
-    raised_amount(amount, percent, month, year)
+    forecasting?(month, year) ? raised_amount(amount, percent, month, year) : amount
   end
 
   def expenses_of_month(month, year, percent: 0.0)
     amount = last_available_transaction_amount(:expense, month, year)
-    raised_amount(amount, percent, month, year)
+    forecasting?(month, year) ? raised_amount(amount, percent, month, year) : amount
   end
 
   def revenue_of_month(month, year, income_percent: 0.0, expenses_percent: 0.0)
@@ -141,10 +141,13 @@ class Scenario < ApplicationRecord
   end
 
   def raised_amount(amount, percent, month, year)
-    date = Date.new(year, month, 1)
-    return amount if date <= last_transaction_date || percent.zero?
+    return amount if percent.zero?
 
-    diff = months_difference(date, last_transaction_date)
+    diff = months_difference(Date.new(year, month, 1), last_transaction_date)
     amount * ((1 + percent/100.0) ** diff)
+  end
+
+  def forecasting?(month, year)
+    Date.new(year, month, 1) > last_transaction_date
   end
 end
