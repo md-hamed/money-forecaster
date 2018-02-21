@@ -29,20 +29,10 @@ class Scenario < ApplicationRecord
   # if a month and year are provided; it returns cumulative
   # total till the provided date
   def cumulative_total(month = nil, year = nil)
-    min_period_date, max_period_date = longest_period(month, year)
+    transactions_total_amount = Money.new(incomes.sum(:amount_cents) - expenses.sum(:amount_cents))
+    gaps_total_amount = gaps_total_amount(:income, month, year) - gaps_total_amount(:expenses, month, year)
 
-    # loop from min period date to max period date
-    current_date = min_period_date
-    cumulative_total = 0
-    prev_month_income = 0
-    prev_month_expenses = 0
-    while current_date != (max_period_date + 1.month) do
-      month_income, prev_month_income, prev_month_expenses = month_cumulative_total(prev_month_income, prev_month_expenses, current_date)
-      cumulative_total += month_income
-      current_date += 1.month
-    end
-
-    cumulative_total
+    transactions_total_amount + gaps_total_amount
   end
 
   alias bank_balance cumulative_total
@@ -134,5 +124,46 @@ class Scenario < ApplicationRecord
     expenses = prev_month_expenses if expenses.zero?
 
     [income - expenses, income, expenses]
+  end
+
+  def gaps_total_amount(type, month = nil, year = nil)
+    model = type.to_s.classify.constantize
+    available_transactions = model.where(scenario: self).map(&:issued_on)
+
+    available_dates = available_transaction_dates(type, month, year)
+    
+    if available_dates.length == 1
+      return transactions_amount_on(type, available_dates.first.month,
+                                    available_dates.first.year)
+    end
+
+    gaps_total_amount = 0
+    available_dates.each_cons(2).each do |prev, curr|
+      curr_contains_transaction = available_transactions.include?(curr)
+
+      if ((prev + 1.month) != curr) || !curr_contains_transaction # gap identified
+        gap_length = (curr.year * 12 + curr.month) - (prev.year * 12 + prev.month)
+        gap_length -= 1 if curr_contains_transaction
+        gaps_total_amount += gap_length * transactions_amount_on(type, prev.month, prev.year)
+      end
+    end
+
+    gaps_total_amount
+  end
+
+  def available_transaction_dates(type, month, year)
+    model = type.to_s.classify.constantize
+
+    available_dates = model.where(scenario: self)
+                           .order('issued_on ASC')
+
+    if month.present? && year.present?
+      end_date = Date.new(year, month)
+    else
+      end_date = transactions.maximum(:issued_on) # max transaction date
+    end
+
+    available_dates.where('issued_on <= ?', end_date)
+                     .map(&:issued_on).push(end_date).uniq
   end
 end
