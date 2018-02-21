@@ -14,12 +14,10 @@ class Scenario < ApplicationRecord
     last_available_transaction_amount(:income, month, year)
   end
 
-  # expenses of specefic month/year
   def expenses_of_month(month, year)
     last_available_transaction_amount(:expense, month, year)
   end
 
-  # revenue of specefic month/year
   def revenue_of_month(month, year)
     income_of_month(month, year) - expenses_of_month(month, year)
   end
@@ -36,12 +34,10 @@ class Scenario < ApplicationRecord
 
   # Actions
 
-  # adds income amount for a month
   def add_income(amount, year, month)
     add_transaction(:income, amount, year, month)
   end
 
-  # adds expense amount for a month
   def add_expense(amount, year, month)
     add_transaction(:expense, amount, year, month)
   end
