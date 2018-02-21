@@ -10,14 +10,13 @@ class Scenario < ApplicationRecord
 
   # Getters
 
-  # income of specefic month/year
   def income_of_month(month, year)
-    transactions_total_of_month(:income, month, year)
+    last_available_transaction_amount(:income, month, year)
   end
 
   # expenses of specefic month/year
   def expenses_of_month(month, year)
-    transactions_total_of_month(:expenses, month, year)
+    last_available_transaction_amount(:expense, month, year)
   end
 
   # revenue of specefic month/year
@@ -49,7 +48,21 @@ class Scenario < ApplicationRecord
 
   private
 
-  # add transaction with specefic type on a date
+  def last_available_transaction_amount(type, month, year)
+    model = type.to_s.classify.constantize
+
+    last_transaction_date = model.where(scenario: self)
+                                 .where('issued_on <= ?', Date.new(year, month))
+                                 .last.try(:issued_on)
+    if last_transaction_date.present?
+      amount = model.where(scenario: self)
+                       .where(issued_on: last_transaction_date)
+                       .sum(:amount_cents)
+    end
+    
+    Money.new amount
+  end
+
   def add_transaction(type, amount, year, month)
     date = Date.new(year, month, 1)
     model = type.to_s.classify.constantize
@@ -60,7 +73,6 @@ class Scenario < ApplicationRecord
                  issued_on: date)
   end
 
-  # get transactions amount of specefic type on a date
   def transactions_total_of_month(type, month, year)
     model = type.to_s.classify.constantize
 
