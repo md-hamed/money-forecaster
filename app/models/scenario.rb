@@ -29,8 +29,8 @@ class Scenario < ApplicationRecord
   # returns cumulative total for all months
   # if a month and year are provided; it returns cumulative
   # total till the provided date
-  def cumulative_total(month = nil, year = nil)
-    gaps_total = total_gaps_amount(:income, month, year) - total_gaps_amount(:expenses, month, year)
+  def cumulative_total(month = nil, year = nil, income_percent: 0.0, expenses_percent: 0.0)
+    gaps_total = total_gaps_amount(:income, month, year, percent: income_percent) - total_gaps_amount(:expenses, month, year, percent: expenses_percent)
     total_cumulative_transactions(month, year) + gaps_total
   end
 
@@ -96,7 +96,7 @@ class Scenario < ApplicationRecord
     Money.new(income_total.sum(:amount_cents) - expenses_total.sum(:amount_cents))
   end
 
-  def total_gaps_amount(type, month = nil, year = nil)
+  def total_gaps_amount(type, month = nil, year = nil, percent: 0.0)
     model = type.to_s.classify.constantize
     available_transactions = model.where(scenario: self).map(&:issued_on)
     available_dates = dates_with_transactions_available(type, month, year)
@@ -108,7 +108,20 @@ class Scenario < ApplicationRecord
       if ((prev + 1.month) != curr) || !curr_contains_transaction # gap identified
         gap_length = months_difference(curr, prev)
         gap_length -= 1 if curr_contains_transaction
-        total_gaps_amount += gap_length * total_transactions_of_month(type, prev.month, prev.year)
+        total_transactions = total_transactions_of_month(type, prev.month, prev.year)
+
+        if forecasting?(curr.month, curr.year) && !percent.zero?
+          forecasted_months_count = months_difference(curr, last_transaction_date)
+          non_forecasted_months = gap_length - forecasted_months_count
+          first_forecasted_month = last_transaction_date + 1.month
+
+          forecasted_months_count.times do |i|
+            total_gaps_amount += raised_amount(total_transactions, percent, (first_forecasted_month + i.months).month, (first_forecasted_month + i.months).year)
+          end
+          total_gaps_amount += non_forecasted_months * total_transactions
+        else
+          total_gaps_amount += gap_length * total_transactions
+        end
       end
     end
 
@@ -125,7 +138,7 @@ class Scenario < ApplicationRecord
     if month.present? && year.present?
       end_date = Date.new(year, month)
     else
-      end_date = max_transaction_date
+      end_date = last_transaction_date
     end
 
     available_dates.where('issued_on <= ?', end_date)
