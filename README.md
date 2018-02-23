@@ -20,11 +20,13 @@ and tada :tada:
 Note: The following scenarios are based on the seeded user's first scenario; so make sure you've seeded the db.
 
 ##### Scenario 1
-| May | June           | July  | August |
+|May|June|July |August|
 |:-----:|:-----:|:-----:|:-----:|
 |$1000|//|//|$2000|
 |$500|//|//|$1000|
+
 `//` indicates a gap filling. i.e. the amount is similar to the last available month.
+
 Let's play around this scenario:
 ###### Example 1
 ```
