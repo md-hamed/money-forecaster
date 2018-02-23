@@ -5,5 +5,5 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
   # Associations
-  has_many :scenarios
+  has_many :scenarios, dependent: :destroy
 end
