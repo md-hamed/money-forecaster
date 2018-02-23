@@ -40,12 +40,12 @@ class Scenario < ApplicationRecord
 
   # Actions
 
-  def add_income(amount, year, month, title = nil)
-    add_transaction(:income, amount, year, month, title)
+  def add_income(amount, month, year, title = nil)
+    add_transaction(:income, amount, month, year, title)
   end
 
-  def add_expense(amount, year, month, title = nil)
-    add_transaction(:expense, amount, year, month, title)
+  def add_expense(amount, month, year, title = nil)
+    add_transaction(:expense, amount, month, year, title)
   end
 
   def duplicate
@@ -75,7 +75,7 @@ class Scenario < ApplicationRecord
     Money.new amount
   end
 
-  def add_transaction(type, amount, year, month, title = nil)
+  def add_transaction(type, amount, month, year, title = nil)
     date = Date.new(year, month, 1)
     model = type.to_s.classify.constantize
     money = Money.from_amount(amount)

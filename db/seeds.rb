@@ -13,11 +13,11 @@ puts 'Creating Scenario 1 ..'
 scenario = user.scenarios.create(title: 'Scenario 1')
 
 puts 'Adding Transactions to Scenario 1..'
-scenario.add_income(1000, 2017, 5, 'Salary 1')
-scenario.add_expense(500, 2017, 5, 'Salary 2')
+scenario.add_income(1000, 5, 2017, 'Salary 1')
+scenario.add_expense(500, 5, 2017, 'Salary 2')
 
-scenario.add_income(2000, 2017, 8, 'Serviec 1')
-scenario.add_expense(1000, 2017, 8, 'Serviec 1')
+scenario.add_income(2000, 8, 2017, 'Serviec 1')
+scenario.add_expense(1000, 8, 2017, 'Serviec 1')
 
 # cumulative revenue on 8, 2017 = 2500
 # cumulative revenue on 9, 2017 = 3500
@@ -26,12 +26,12 @@ puts 'Seeding User ..'
 scenario = user.scenarios.create(title: 'Scenario 2')
 
 puts 'Creating Scenario 2 ..'
-scenario.add_income(1000, 2017, 5, 'Salary 1')
-scenario.add_expense(500, 2017, 7, 'Salary 1')
+scenario.add_income(1000, 5, 2017, 'Salary 1')
+scenario.add_expense(500, 7, 2017, 'Salary 1')
 
 puts 'Adding Transactions to Scenario 2..'
-scenario.add_income(2000, 2017, 10, 'Serviec 1')
-scenario.add_expense(1000, 2017, 9, 'Serviec 1')
+scenario.add_income(2000, 10, 2017, 'Serviec 1')
+scenario.add_expense(1000, 9, 2017, 'Serviec 1')
 
 # cumulative revenue on 10, 2017 = 4000
 # cumulative revenue on 11, 2017 = 5000
