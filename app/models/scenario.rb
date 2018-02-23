@@ -8,6 +8,8 @@ class Scenario < ApplicationRecord
   # Validations
   validates :title, presence: true
 
+  accepts_nested_attributes_for :transactions
+
   # Getters
 
   def income_of_month(month, year, percent: 0.0)
@@ -44,6 +46,15 @@ class Scenario < ApplicationRecord
 
   def add_expense(amount, year, month)
     add_transaction(:expense, amount, year, month)
+  end
+
+  def duplicate
+    scenario_params = self.attributes.except('id', 'created_at', 'updated_at')
+    scenario_params['title'] += ' copy'
+    duplicated_scenario = Scenario.new scenario_params
+    transactions_params = transactions.map(&:attributes).map { |v| v.except('id', 'created_at', 'updated_at', 'scenario_id' ) }
+    duplicated_scenario.transactions_attributes = transactions_params
+    duplicated_scenario.save!
   end
 
   private
