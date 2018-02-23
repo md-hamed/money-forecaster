@@ -55,6 +55,7 @@ class Scenario < ApplicationRecord
     transactions_params = transactions.map(&:attributes).map { |v| v.except('id', 'created_at', 'updated_at', 'scenario_id' ) }
     duplicated_scenario.transactions_attributes = transactions_params
     duplicated_scenario.save!
+    duplicated_scenario
   end
 
   private
