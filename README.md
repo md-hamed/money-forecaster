@@ -43,7 +43,7 @@ Let's play around this scenario:
    created_at: Fri, 23 Feb 2018 01:38:02 UTC +00:00,
    updated_at: Fri, 23 Feb 2018 01:38:02 UTC +00:00,
    user_id: 5>
-> year_later_date = s1.transactions.last.issued_on + 1.year
+> year_later_date = s1.last_transaction_date + 1.year
 => Wed, 01 Aug 2018
 > # calculate how bank balance will be affected a year later with a 3% increase in income
 > s1.bank_balance(year_later_date.month, year_later_date.year, income_percent: 3)
@@ -63,10 +63,11 @@ Let's play around this scenario:
    created_at: Fri, 23 Feb 2018 02:07:27 UTC +00:00,
    updated_at: Fri, 23 Feb 2018 02:07:27 UTC +00:00,
    user_id: 5>
-> last_transaction_date = s2.transactions.last.issued_on
+> s2.last_transaction_date
 => Tue, 01 Aug 2017
 > # add expense of $500 on the last month where transactions are available
-> s2.add_expense(500, last_transaction_date.month, last_transaction_date.year, 'Rent')
+> # this has the effect of duplication over the next year
+> s2.add_expense(500, s2.last_transaction_date.month, s2.last_transaction_date.year, 'Rent')
 > #<Expense:0x00000005a024e0
    id: 99,
    title: "Rent",
@@ -78,11 +79,12 @@ Let's play around this scenario:
    amount_cents: 50000,
    amount_currency: "USD">
 > # how will this affect my bank balance?
-> year_later_date = last_transaction_date + 1.year
+> year_later_date = s2.last_transaction_date + 1.year
 => Wed, 01 Aug 2018
 > s2.bank_balance(year_later_date.month, year_later_date.year, income_percent: 3)
-> "$13,235.58" 
-> 
+=> "$13,235.58" 
+> s2.expenses_of_month(year_later_date.month, year_later_date.year, percent: 3).format
+=> "$2,138.64"
 > # hmm.. interesting!
 ```
 ###### Example 3
@@ -96,28 +98,59 @@ Let's play around this scenario:
    user_id: 5>
 > s3 = s.duplicate
 => # queries ..
-=> #<Scenario:0x00000002c26dc8
-   id: 38,
+=> #<Scenario:0x00000005339e10
+   id: 39,
    title: "Scenario 1 copy",
-   created_at: Fri, 23 Feb 2018 02:46:23 UTC +00:00,
-   updated_at: Fri, 23 Feb 2018 02:46:23 UTC +00:00,
+   created_at: Fri, 23 Feb 2018 03:00:59 UTC +00:00,
+   updated_at: Fri, 23 Feb 2018 03:00:59 UTC +00:00,
    user_id: 8>
-> last_transaction_date = s3.transactions.last.issued_on
+> some_date = s3.last_transaction_date - 1.month
+=> Sat, 01 Jul 2017
+# what if a new income of $90 is added for every month through the next year?
+> s3.add_income(90, some_date.month, some_date.year, 'Freelancing')
+=> #<Income:0x00000004e025f0
+   id: 201,
+   title: "Freelancing",
+   type: "Income",
+   issued_on: Sat, 01 Jul 2017,
+   scenario_id: 44,
+   created_at: Fri, 23 Feb 2018 03:07:43 UTC +00:00,
+   updated_at: Fri, 23 Feb 2018 03:07:43 UTC +00:00,
+   amount_cents: 9000,
+   amount_currency: "USD">
+> year_later_date = s3.last_transaction_date + 1.year
+=> Wed, 01 Aug 2018
+> s3.bank_balance(year_later_date.month, year_later_date.year, income_percent: 3).format
+=> "$18,825.58"
+> # wait.. how? 
+> s3.add_income(1000, some_date.month, some_date.year, 'Freelancing')
+=> "$19,825.58"
+```
+
+###### Example 4
+```
+> s4 = Scenario.last.duplicate
+=> #<Scenario:0x00000005657bb0
+   id: 45,
+   title: "Scenario 1 copy copy",
+   created_at: Fri, 23 Feb 2018 03:13:22 UTC +00:00,
+   updated_at: Fri, 23 Feb 2018 03:13:22 UTC +00:00,
+   user_id: 9>
+> s4.last_transaction_date
 => Tue, 01 Aug 2017
-# what if a new income of $90 is added?
-> s3.add_income(90, last_transaction_date.month, last_transaction_date.year, 'Freelancing')
-=> #<Income:0x00000005ba4ed8
-   id: 174,
+> s4.add_income(90, s4.last_transaction_date.month, s4.last_transaction_date.year, 'Freelancing')
+> #<Income:0x00000005377a80
+   id: 209,
    title: "Freelancing",
    type: "Income",
    issued_on: Tue, 01 Aug 2017,
-   scenario_id: 38,
-   created_at: Fri, 23 Feb 2018 02:47:00 UTC +00:00,
-   updated_at: Fri, 23 Feb 2018 02:47:00 UTC +00:00,
+   scenario_id: 45,
+   created_at: Fri, 23 Feb 2018 03:14:27 UTC +00:00,
+   updated_at: Fri, 23 Feb 2018 03:14:27 UTC +00:00,
    amount_cents: 9000,
    amount_currency: "USD">
-> year_later_date = last_transaction_date + 1.year
+> year_later_date = s4.last_transaction_date + 1.year
 => Wed, 01 Aug 2018
-> s3.bank_balance(year_later_date.month, year_later_date.year, income_percent: 3).format
-=> "$21,141.19"
+> s4.bank_balance(year_later_date.month, year_later_date.year, income_percent: 3).format
+=> "$21,231.19"
 ```
