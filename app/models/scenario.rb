@@ -58,6 +58,10 @@ class Scenario < ApplicationRecord
     duplicated_scenario
   end
 
+  def last_transaction_date
+    transactions.maximum(:issued_on)
+  end
+  
   private
 
   def last_available_transaction_amount(type, month, year)
@@ -156,10 +160,6 @@ class Scenario < ApplicationRecord
 
     available_dates.where('issued_on <= ?', end_date)
                      .map(&:issued_on).push(end_date).uniq
-  end
-
-  def last_transaction_date
-    transactions.maximum(:issued_on)
   end
 
   def months_difference(current_date, previous_date)
