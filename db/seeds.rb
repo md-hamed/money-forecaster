@@ -10,7 +10,7 @@ puts 'Seeding User ..'
 user = User.first_or_create(email: 'foo@bar.com', password: '123456789')
 
 puts 'Creating Scenario 1 ..'
-scenario = user.scenarios.first_or_create(title: 'Scenario 1')
+scenario = user.scenarios.first_or_create(title: 'Scenario 1', current_date: Date.new(2017, 8))
 
 if scenario.transactions.none?
   puts 'Adding Transactions to Scenario 1..'
