@@ -1,3 +1,4 @@
+
 ## Money Forecaster
 A project to get insights and forecasts about how money behaves in differenc scenarios.
 
@@ -22,19 +23,19 @@ Note: The following scenarios are based on the seeded user's first scenario; so 
 ##### Scenario 1
 | May | June           | July  | August |
 |:-----:|:-----:|:-----:|:-----:|
-|$1000|//|//|$2000|
-|$500|//|//|$1000|
+|+$1000|//|//|+$2000|
+|+$500|//|//|+$1000|
 `//` indicates a gap filling. i.e. the amount is similar to the last available month.
 Let's play around this scenario:
 ###### Example 1
 ```
 > s = User.first.scenarios.first
-=> #<Scenario:0x007fe7fc0d5ae8
-   id: 17,
-   title: "Scenario 1",
-   created_at: Fri, 23 Feb 2018 01:36:53 UTC +00:00,
-   updated_at: Fri, 23 Feb 2018 01:36:53 UTC +00:00,
-   user_id: 5>
+=> #<Scenario:0x0000000437a9e8
+  id: 55,
+  title: "Scenario 1",
+  created_at: Mon, 26 Feb 2018 02:09:13 UTC +00:00,
+  updated_at: Mon, 26 Feb 2018 02:09:13 UTC +00:00,
+  user_id: 15>
 > s1 = s.duplicate
 => # queries ..
 => #<Scenario:0x00000005108038
@@ -49,10 +50,12 @@ Let's play around this scenario:
 > s1.bank_balance(year_later_date.month, year_later_date.year, income_percent: 3)
 => #<Money fractional:1973558 currency:USD>
 > _.format
-=> "$19,735.58"
+=> "$28,853.36"
+> s1.bank_balance(year_later_date.month, year_later_date.year, income_percent: 3, include_known_months: false).format
+=> "$25,853.36"
 > # calculate how income will be affected a year later with a 3% increase in income
 > s1.income_of_month(year_later_date.month, year_later_date.year, percent: 3).format
-=> "$2,851.52"
+=> "$4,277.28"
 ```
 ###### Example 2
 ```
