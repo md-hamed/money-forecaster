@@ -19,23 +19,21 @@ if scenario.transactions.none?
 
   scenario.add_income(2000, 8, 2017, 'Salary 2', ending_month: 5, ending_year: 2030)
   scenario.add_expense(1000, 8, 2017, 'Serviec 2', ending_month: 5, ending_year: 2030)
-
-  scenario.add_income(500, 6, 2017, 'Salary 3')
 end
 
-# cumulative revenue on 8, 2017 = 2500
-# cumulative revenue on 9, 2017 = 3500
+# cumulative total on 8, 2017 = 3000
+# cumulative total on 9, 2017 = 4500
 
-# puts 'Seeding User ..'
-# scenario = user.scenarios.create(title: 'Scenario 2')
+puts 'Seeding User ..'
+scenario = user.scenarios.create(title: 'Scenario 2')
 
-# puts 'Creating Scenario 2 ..'
-# scenario.add_income(1000, 5, 2017, 'Salary 1')
-# scenario.add_expense(500, 7, 2017, 'Salary 1')
+puts 'Creating Scenario 2 ..'
+scenario.add_income(1000, 5, 2017, 'Salary 1', ending_month: 5, ending_year: 2030)
+scenario.add_expense(500, 7, 2017, 'Service 1', ending_month: 5, ending_year: 2030)
 
-# puts 'Adding Transactions to Scenario 2..'
-# scenario.add_income(2000, 10, 2017, 'Serviec 1')
-# scenario.add_expense(1000, 9, 2017, 'Serviec 1')
+puts 'Adding Transactions to Scenario 2..'
+scenario.add_income(2000, 10, 2017, 'Freelancing')
+scenario.add_expense(1000, 9, 2017, 'Serviec 2', ending_month: 5, ending_year: 2030)
 
-# cumulative revenue on 10, 2017 = 4000
-# cumulative revenue on 11, 2017 = 5000
+# cumulative total on 10, 2017 = 4000
+# cumulative total on 11, 2017 = 3500
