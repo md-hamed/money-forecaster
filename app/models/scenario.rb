@@ -40,6 +40,10 @@ class Scenario < ApplicationRecord
 
   alias bank_balance cumulative_total
 
+  def last_transaction_date
+    @last_transaction_date ||= transactions.maximum(:issued_on)
+  end
+
   # Actions
 
   def add_income(amount, month, year, title = nil, ending_month: nil, ending_year: nil)
@@ -51,6 +55,18 @@ class Scenario < ApplicationRecord
     add_transaction(:expense, amount, month, year, title, 
                     ending_month: ending_month, ending_year: ending_year)
   end
+
+  def duplicate
+    scenario_params = self.attributes.except('id', 'created_at', 'updated_at')
+    scenario_params['title'] += ' copy'
+    duplicated_scenario = Scenario.new scenario_params
+    transactions_params = transactions.map(&:attributes).map { |v| v.except('id', 'created_at', 'updated_at', 'scenario_id' ) }
+    duplicated_scenario.transactions_attributes = transactions_params
+    duplicated_scenario.save!
+    duplicated_scenario
+  end
+
+  private
 
   def add_transaction(type, amount, month, year, title = nil, ending_month: nil, ending_year: nil)
     date = Date.new(year, month, 1)
@@ -67,22 +83,6 @@ class Scenario < ApplicationRecord
                  issued_on: date,
                  title: title)
   end
-
-  def duplicate
-    scenario_params = self.attributes.except('id', 'created_at', 'updated_at')
-    scenario_params['title'] += ' copy'
-    duplicated_scenario = Scenario.new scenario_params
-    transactions_params = transactions.map(&:attributes).map { |v| v.except('id', 'created_at', 'updated_at', 'scenario_id' ) }
-    duplicated_scenario.transactions_attributes = transactions_params
-    duplicated_scenario.save!
-    duplicated_scenario
-  end
-
-  def last_transaction_date
-    @last_transaction_date ||= transactions.maximum(:issued_on)
-  end
-  
-  private
 
   def total_recurrent_amount_of_month(type, month, year)
     Money.new recurrent_transactions_of_month(type, month, year).sum(:amount_cents)
