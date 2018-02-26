@@ -31,9 +31,9 @@ class Scenario < ApplicationRecord
   # returns cumulative total for all months
   # if a month and year are provided; it returns cumulative
   # total till the provided date
-  def cumulative_total(month = nil, year = nil, income_percent: 0.0, expenses_percent: 0.0)
-    total_income = cumulative_recurrent_amount(:income, month, year, percent: income_percent) + cumulative_non_recurrent_amount(:income, month, year, percent: income_percent)
-    total_expenses = cumulative_recurrent_amount(:expense, month, year, percent: expenses_percent) + cumulative_non_recurrent_amount(:expense, month, year, percent: expenses_percent)
+  def cumulative_total(month = nil, year = nil, income_percent: 0.0, expenses_percent: 0.0, include_known_months: true)
+    total_income = cumulative_recurrent_amount(:income, month, year, percent: income_percent, include_known_months: include_known_months) + cumulative_non_recurrent_amount(:income, month, year, percent: income_percent)
+    total_expenses = cumulative_recurrent_amount(:expense, month, year, percent: expenses_percent, include_known_months: include_known_months) + cumulative_non_recurrent_amount(:expense, month, year, percent: expenses_percent)
 
     total_income - total_expenses
   end
