@@ -120,7 +120,7 @@ class Scenario < ApplicationRecord
         forecasted_months = t.schedule.occurrences_between(first_forecasted_date, date)
 
         if forecasting?(month, year) && t.issued_on <= current_date
-          # a transaction that needs to be raised
+          # transaction should be raised
           raised_amount(t.amount, percent, forecasted_months.count)
         else
           t.amount
