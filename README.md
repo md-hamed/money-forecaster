@@ -27,7 +27,7 @@ Note: The following scenarios are based on the seeded user's first scenario; so 
 |+$1000|//|//|+$2000|
 |+$500|//|//|+$1000|
 
-`//` indicates a gap filling. i.e. the amount is similar to the last available month.
+All transactions are recurrent (monthly).
 
 Let's play around this scenario:
 ###### Example 1
