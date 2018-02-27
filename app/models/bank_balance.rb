@@ -1,0 +1,2 @@
+class BankBalance < Transaction
+end

@@ -4,6 +4,7 @@ class Scenario < ApplicationRecord
   has_many :transactions, dependent: :destroy
   has_many :incomes
   has_many :expenses
+  has_many :bank_balances
 
   # Validations
   validates :title, presence: true
@@ -29,7 +30,7 @@ class Scenario < ApplicationRecord
     income - expenses
   end
 
-  # returns cumulative total for all months
+  # returns cumulative total for all months till current_date
   # if a month and year are provided; it returns cumulative
   # total till the provided date
   def cumulative_total(month = nil, year = nil, income_percent: 0.0, expenses_percent: 0.0)
@@ -39,7 +40,12 @@ class Scenario < ApplicationRecord
     total_income - total_expenses
   end
 
-  # alias bank_balance cumulative_total
+  def bank_balance(month = nil, year = nil, income_percent: 0.0, expenses_percent: 0.0)
+    cumulative_total = cumulative_total(month, year, income_percent: income_percent, expenses_percent: expenses_percent)
+    bank_balance = cumulative_bank_balance_amount(month, year)
+
+    cumulative_total + bank_balance
+  end
 
   def first_forecasted_date
     current_date + 1.month
@@ -53,6 +59,10 @@ class Scenario < ApplicationRecord
 
   def add_expense(amount, month, year, title = nil, ending_month: nil, ending_year: nil, payments_type: :one_time)
     add_transaction(:expense, amount, month, year, title, ending_month, ending_year, payments_type)
+  end
+
+  def add_bank_balance(amount, month, year, title = nil)
+    add_transaction(:bank_balance, amount, month, year, title, payments_type: :one_time)
   end
 
   def duplicate
@@ -83,7 +93,7 @@ class Scenario < ApplicationRecord
     end
   end
 
-  def add_transaction(type, amount, month, year, title, ending_month, ending_year, payments_type)
+  def add_transaction(type, amount, month, year, title, ending_month = nil, ending_year = nil, payments_type)
     schedule = schedule_for_transaction(month, year, ending_month, ending_year, payments_type)
 
     model = type.to_s.classify.constantize
@@ -185,6 +195,11 @@ class Scenario < ApplicationRecord
     Money.new(model.non_recurrent.where(scenario: self)
                    .where('issued_on <= ?', date)
                    .sum(:amount_cents))
+  end
+
+  def cumulative_bank_balance_amount(month, year)
+    date = (month.present? && year.present?) ? Date.new(year, month, 1) : current_date
+    Money.new bank_balances.where('issued_on <= ?', date).sum(:amount_cents)
   end
 
   def raised_amount(amount, percent, months_count)
