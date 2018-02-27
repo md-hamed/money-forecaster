@@ -7,6 +7,7 @@ class Scenario < ApplicationRecord
 
   # Validations
   validates :title, presence: true
+  validates :current_date, presence: true
 
   accepts_nested_attributes_for :transactions
 
@@ -40,12 +41,8 @@ class Scenario < ApplicationRecord
 
   # alias bank_balance cumulative_total
 
-  def last_transaction_date
-    current_date || Date.today
-  end
-
   def first_forecasted_date
-    last_transaction_date + 1.month
+    current_date + 1.month
   end
 
   # Actions
@@ -112,7 +109,7 @@ class Scenario < ApplicationRecord
       if t.schedule.occurs_on? date
         forecasted_months = t.schedule.occurrences_between(first_forecasted_date, date)
 
-        if forecasting?(month, year) && t.issued_on <= last_transaction_date
+        if forecasting?(month, year) && t.issued_on <= current_date
           # a transaction that needs to be raised
           raised_amount(t.amount, percent, forecasted_months.count)
         else
@@ -138,7 +135,7 @@ class Scenario < ApplicationRecord
 
     finite_transactions = transactions.where('ending_on >= ?', date)
     infinite_transactions = transactions.infinite
-    
+
     finite_transactions.or(infinite_transactions)
   end
 
@@ -155,14 +152,14 @@ class Scenario < ApplicationRecord
     if month.present? && year.present?
       date = Date.new(year, month, 1)
     else
-      date = last_transaction_date
+      date = current_date
     end
 
     recurrent_transactions_of_month(type, date.month, date.year).sum do |t|
-      non_forecasted_months = t.schedule.occurrences([last_transaction_date, date].min)
+      non_forecasted_months = t.schedule.occurrences([current_date, date].min)
       forecasted_months = t.schedule.occurrences_between(first_forecasted_date, date)
 
-      if forecasting?(date.month, date.year) && t.issued_on <= last_transaction_date
+      if forecasting?(date.month, date.year) && t.issued_on <= current_date
         # transaction should be raised
         total_forecasted_amount = forecasted_months.sum do |m|
           diff = t.schedule.occurrences_between(first_forecasted_date , m)
@@ -182,7 +179,7 @@ class Scenario < ApplicationRecord
     if month.present? && year.present?
       date = Date.new(year, month, 1)
     else
-      date = last_transaction_date
+      date = current_date
     end
 
     Money.new(model.non_recurrent.where(scenario: self)
@@ -197,6 +194,6 @@ class Scenario < ApplicationRecord
   end
 
   def forecasting?(month, year)
-    Date.new(year, month, 1) > last_transaction_date
+    Date.new(year, month, 1) > current_date
   end
 end
