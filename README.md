@@ -151,7 +151,7 @@ Let's play around this scenario:
   amount_currency: "USD",
   schedule: nil,
   ending_on: nil>
-> year_later_date = s3.last_transaction_date + 1.year
+> year_later_date = s3.current_date + 1.year
 => Wed, 01 Aug 2018
 > s3.bank_balance(year_later_date.month, year_later_date.year, income_percent: 3).format
 => "$28,943.36"
