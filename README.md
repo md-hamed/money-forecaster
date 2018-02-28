@@ -24,8 +24,8 @@ Note: The following scenarios are based on the seeded user's first scenario; so 
 ##### Scenario 1
 | May | June           | July  | August |
 |:-----:|:-----:|:-----:|:-----:|
-|+$1000|//|//|+$2000|
-|+$500|//|//|+$1000|
+|+$1000| | |+$2000|
+|+$500| | |+$1000|
 
 All transactions are recurrent (monthly).
 
@@ -190,4 +190,36 @@ Let's play around this scenario:
 > s4.bank_balance(year_later_date.month, year_later_date.year, income_percent: 3).format
 => "$30,023.36"
 > # cool!
+```
+
+##### Scenario 1
+| Type | 11/17 | 12/17 | 1/18 | 2/18 |
+|:-------:|:-------:|:-------:|:-------:|:-------:|
+| Income | Salary 1: $1000/month |Bonus: $1000/year|Salary 3: $1000/month||
+|  | Salary 2: $500/month till 4/18 | | ||
+| Bank balances | Bank balance 1: $1000 | | | |
+| Expenses | Service 1: $500/month |Laptop purchase: $1000| |GitHub Subs: $300/year|
+
+###### Example 5
+```
+> s5 = Scenario.find_by(title: 'Scenario 2')
+=> #<Scenario:0x007f1500185a08
+  id: 52,
+  title: "Scenario 2",
+  created_at: Wed, 28 Feb 2018 00:33:38 UTC +00:00,
+  updated_at: Wed, 28 Feb 2018 00:33:38 UTC +00:00,
+  user_id: 1,
+  current_date: Thu, 01 Feb 2018>
+> s5.current_date
+=> Thu, 01 Feb 2018
+> # what's my current bank balance?
+> s5.bank_balance.format
+=> "$6,700.00"
+> 1000*4 + 500*4 + 1000 + 1000*2 + 1000 - (500*4 + 1000 + 300)
+=> 6,700
+> # what will my bank balance be in 4/18 with an income increase of 3% and an expense decrease of 5%?
+> s5.bank_balance(4, 2018, income_percent: 3, expenses_percent: -5).format
+=> "$11,001.00" 
+> 6700 + ( 2*1000*(1.03**1) + 2*1000*(1.03**2) + 500*(1.03**1) + 500*(1.03**2) ) - (500*(0.95**1) + 500*(0.95**2))
+=> 11001.0
 ```
