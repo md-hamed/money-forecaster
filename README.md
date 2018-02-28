@@ -192,7 +192,7 @@ Let's play around this scenario:
 > # cool!
 ```
 
-##### Scenario 1
+##### Scenario 2
 | Type | 11/17 | 12/17 | 1/18 | 2/18 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
 | Income | Salary 1: $1000/month |Bonus: $1000/year|Salary 3: $1000/month||
