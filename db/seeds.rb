@@ -30,12 +30,14 @@ scenario = user.scenarios.create(title: 'Scenario 2', current_date: Date.new(201
 if scenario.transactions.none?
   puts 'Adding Transactions to Scenario 2..'
   scenario.add_income(1000, 11, 2017, 'Salary 1 (permanent)', payments_type: :monthly)
-  scenario.add_income(500, 11, 2017, 'Salary 2 (non-permanent)', ending_month: 5, ending_year: 2018, payments_type: :monthly)
+  scenario.add_income(500, 11, 2017, 'Salary 2 (non-permanent)', ending_month: 4, ending_year: 2018, payments_type: :monthly)
   scenario.add_income(1000, 12, 2017, 'Year bonus', payments_type: :yearly)
   scenario.add_income(1000, 1, 2018, 'Salary 3', payments_type: :monthly)
+  scenario.add_bank_balance(1000, 11, 2017, 'Bank balance 1')
 
   scenario.add_expense(500, 11, 2017, 'Service 1', payments_type: :monthly)
   scenario.add_expense(1000, 12, 2017, 'Laptop purchase', payments_type: :one_time)
+  scenario.add_expense(300, 2, 2018, 'Github Subscription', payments_type: :yearly)
 end
 
 # cumulative total on 2, 2018 = $6,000
