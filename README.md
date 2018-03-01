@@ -235,3 +235,27 @@ Let's play around this scenario:
 > 6700 + ( 2*1000 + 2*1000 + 500 + 500 ) - (500 + 500)
 => 10700
 ```
+
+###### Example 6
+```
+> # what if I need to delete a specefic transaction?
+> s6 = s5.duplicate
+=> #<Scenario:0x00000003dc2e88
+  id: 61,
+  title: "Scenario 2 copy",
+  created_at: Thu, 01 Mar 2018 01:06:48 UTC +00:00,
+  updated_at: Thu, 01 Mar 2018 01:06:48 UTC +00:00,
+  user_id: 1,
+  current_date: Thu, 01 Feb 2018>
+> # say I don't need salary 3 anymore
+> s6.transactions.find_by(title: 'Salary 3').delete
+> # how this affects my bank balance?
+> s6.bank_balance.format
+=> "$4,700.00"
+> 1000*4 + 500*4 + 1000 + 1000 - (500*4 + 1000 + 300)
+=> 4700
+> s6.bank_balance(4, 2018, income_percent: 3, expenses_percent: -5).format
+=> "$6,910.10"
+> 4700 + ( 1000*(1.03**1) + 1000*(1.03**2) + 500*(1.03**1) + 500*(1.03**2) ) - (500*(0.95**1) + 500*(0.95**2))
+=> 6910.099999999999
+```
