@@ -258,4 +258,11 @@ Let's play around this scenario:
 => "$6,910.10"
 > 4700 + ( 1000*(1.03**1) + 1000*(1.03**2) + 500*(1.03**1) + 500*(1.03**2) ) - (500*(0.95**1) + 500*(0.95**2))
 => 6910.099999999999
+> # what if I need to update a specefic transaction?
+> s6.transactions.find_by(title: 'Salary 1 (permanent)').update(amount: Money.from_amount(3500))
+> # how this affects my bank balance?
+> s6.bank_balance.format
+> "$14,700.00"
+> 3500*4 + 500*4 + 1000 + 1000 - (500*4 + 1000 + 300)
+> 14700
 ```
