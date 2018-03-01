@@ -1,5 +1,3 @@
-
-
 ## Money Forecaster
 A project to get insights and forecasts about how money behaves in differenc scenarios.
 
@@ -222,4 +220,8 @@ Let's play around this scenario:
 => "$11,001.00" 
 > 6700 + ( 2*1000*(1.03**1) + 2*1000*(1.03**2) + 500*(1.03**1) + 500*(1.03**2) ) - (500*(0.95**1) + 500*(0.95**2))
 => 11001.0
+> s5.bank_balance(5, 2018, income_percent: 3, expenses_percent: -5).format
+=> "$12,757.77"
+> 11_001.0 + (2000*(1.05**3)) - (500*(0.95**3))
+=> 12757.7665
 ```
