@@ -142,11 +142,6 @@ class Scenario < ApplicationRecord
     transactions = model.recurrent
                         .where(scenario: self)
                         .where('issued_on <= ?', date)
-
-    finite_transactions = transactions.where('ending_on >= ?', date)
-    infinite_transactions = transactions.infinite
-
-    finite_transactions.or(infinite_transactions)
   end
 
   def non_recurrent_transactions_of_month(type, month, year)
@@ -175,7 +170,6 @@ class Scenario < ApplicationRecord
           diff = t.schedule.occurrences_between(first_forecasted_date , m)
           raised_amount(t.amount, percent, diff.count)
         end
-
       else # don't raise
         total_forecasted_amount = t.amount * forecasted_months.count
       end
