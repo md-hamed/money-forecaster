@@ -16,17 +16,9 @@ class Transaction < ApplicationRecord
   # Callbacks
   before_save :update_schedule
 
-  def signed_amount
-    amount
-  end
-
   def recurrent?
     schedule.present?
   end
-
-  # def ending_on
-  #   schedule.end_time if recurrent?
-  # end
 
   def infinite_schedule?
     recurrent? && ending_on.nil?
