@@ -53,16 +53,16 @@ class Scenario < ApplicationRecord
 
   # Actions
 
-  def add_income(amount, month, year, title = nil, ending_month: nil, ending_year: nil, payments_type: :one_time)
-    add_transaction(:income, amount, month, year, title, ending_month, ending_year, payments_type)
+  def add_income(amount, month, year, title = nil, ending_month: nil, ending_year: nil, payment_interval: :one_time)
+    add_transaction(:income, amount, month, year, title, ending_month, ending_year, payment_interval)
   end
 
-  def add_expense(amount, month, year, title = nil, ending_month: nil, ending_year: nil, payments_type: :one_time)
-    add_transaction(:expense, amount, month, year, title, ending_month, ending_year, payments_type)
+  def add_expense(amount, month, year, title = nil, ending_month: nil, ending_year: nil, payment_interval: :one_time)
+    add_transaction(:expense, amount, month, year, title, ending_month, ending_year, payment_interval)
   end
 
   def add_bank_balance(amount, month, year, title = nil)
-    add_transaction(:bank_balance, amount, month, year, title, payments_type: :one_time)
+    add_transaction(:bank_balance, amount, month, year, title, payment_interval: :one_time)
   end
 
   def duplicate
@@ -93,8 +93,8 @@ class Scenario < ApplicationRecord
     end
   end
 
-  def add_transaction(type, amount, month, year, title, ending_month = nil, ending_year = nil, payments_type)
-    schedule = schedule_for_transaction(month, year, ending_month, ending_year, payments_type)
+  def add_transaction(type, amount, month, year, title, ending_month = nil, ending_year = nil, payment_interval)
+    schedule = schedule_for_transaction(month, year, ending_month, ending_year, payment_interval)
 
     model = type.to_s.classify.constantize
     issued_on = Date.new(year, month, 1)

@@ -64,7 +64,7 @@ Let's play around this scenario:
 > fun_s.bank_balance(year_later_date.month, year_later_date.year, income_percent: 3).format
 => "$38,853.36"
 > # what about a yearly expense of $500 on 10, 2017?
-> fun_s.add_expense(500, 10, 2017, payments_type: :yearly)
+> fun_s.add_expense(500, 10, 2017, payment_interval: :yearly)
 => #<Expense:0x00000005cb96c0
   id: 113,
   title: nil,
@@ -98,7 +98,7 @@ Let's play around this scenario:
 => Fri, 01 Sep 2017
 > year_later_date = s2.current_date + 1.year
 => Wed, 01 Aug 2018
-> s2.add_expense(500, s2.first_forecasted_date.month, s2.first_forecasted_date.year, 'Rent', payments_type: :monthly)
+> s2.add_expense(500, s2.first_forecasted_date.month, s2.first_forecasted_date.year, 'Rent', payment_interval: :monthly)
 > #<Expense:0x000000042c8b08
   id: 143,
   title: "Rent",
@@ -169,7 +169,7 @@ Let's play around this scenario:
   current_date: Tue, 01 Aug 2017>
 > s4.current_date
 => Tue, 01 Aug 2017
-> s4.add_income(90, s4.first_forecasted_date.month, s4.first_forecasted_date.year, 'Freelancing', payments_type: :monthly)
+> s4.add_income(90, s4.first_forecasted_date.month, s4.first_forecasted_date.year, 'Freelancing', payment_interval: :monthly)
 > #<Income:0x0000000596f488
   id: 155,
   title: "Freelancing",
