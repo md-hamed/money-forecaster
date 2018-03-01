@@ -24,7 +24,7 @@ class Scenario < ApplicationRecord
       total_non_recurrent_amount_of_month(:expense, month, year)
   end
 
-  def revenue_of_month(month, year, income_percent: 0.0, expenses_percent: 0.0)
+  def profit_of_month(month, year, income_percent: 0.0, expenses_percent: 0.0)
     income = income_of_month(month, year, percent: income_percent)
     expenses = expenses_of_month(month, year, percent: expenses_percent)
     income - expenses
