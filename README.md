@@ -56,6 +56,11 @@ Let's play around this scenario:
 > # calculate how income will be affected a year later with a 3% increase in income
 > s1.income_of_month(year_later_date.month, year_later_date.year, percent: 3).format
 => "$4,277.28"
+> # calculate how income will be affected a year later (without an increase)
+> s1.bank_balance(year_later_date.month, year_later_date.year).format
+=> "$21,000.00"
+> 3000 + (3000*12 - 1500*12)
+=> 21000
 
 > # let's duplicate this and have more fun ..
 > fun_s = s1.duplicate
@@ -224,4 +229,9 @@ Let's play around this scenario:
 => "$12,757.77"
 > 11_001.0 + (2000*(1.05**3)) - (500*(0.95**3))
 => 12757.7665
+> # what will my bank balance be in 4/18 without change in income/expenses?
+> s5.bank_balance(4, 2018).format
+=> "$10,700.00"
+> 6700 + ( 2*1000 + 2*1000 + 500 + 500 ) - (500 + 500)
+=> 10700
 ```
