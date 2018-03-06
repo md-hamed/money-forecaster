@@ -148,8 +148,7 @@ class Scenario < ApplicationRecord
     model = type.to_s.classify.constantize
     date = Date.new(year, month, 1)
 
-    model.non_recurrent.non_recurrent
-                       .where(scenario: self)
+    model.non_recurrent.where(scenario: self)
                        .where(issued_on: date)
   end
 
