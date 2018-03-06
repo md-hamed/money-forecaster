@@ -28,6 +28,13 @@ class Transaction < ApplicationRecord
     IceCube::Schedule.from_yaml(self[:schedule]) if self[:schedule]
   end
 
+  def self.recurrent_of_month(month, year)
+    date = Date.new(year, month, 1)
+
+    transactions = recurrent.where('issued_on <= ?', date)
+                            .select { |t| t.schedule.occurs_on? date }
+  end
+
   private
 
   def ending_date_is_after_issue_date
